@@ -28,7 +28,13 @@ function App() {
   return (
     <div className="App">
       <Auth />
-      
+      <div>
+        <input type="text" placeholder="Movie title..." />
+        <input type="number" placeholder="Release Date..." />
+        <input type="checkbox" />
+        <label> Received an Oscar</label>
+        <button> Submit Movie</button>
+      </div>
       {movieList.map((movie) => {
         return (
           <div>
