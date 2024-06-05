@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Auth from "./components/Auth.js";
 import { db } from "./config/firebase";
-import { getDocs, collection,addDoc } from "firebase/firestore";
+import { getDocs, doc,collection,addDoc, deleteDoc } from "firebase/firestore";
 
 function App() {
   const [movieList, setMovieList] = useState([]);
@@ -43,6 +43,11 @@ function App() {
       console.error(err);
     }
   };
+  const deleteMovie = async (id) => {
+    const movieDoc = doc(db, "movie", id);
+    await deleteDoc(movieDoc);
+    await getMovieList();
+  };
   return (
     <div className="App">
       <Auth />
@@ -67,11 +72,12 @@ function App() {
       </div>
       {movieList.map((movie) => {
         return (
-          <div>
+          <div key={movie.id}>
             <h1 style={{ color: movie.receivedOscar ? "green" : "red" }}>
               {movie.title}
             </h1>{" "}
             <p> Date: {movie.releaseYear} </p>
+            <button onClick={() => deleteMovie(movie.id)}> Delete Movie</button>
           </div>
         );
       })}
