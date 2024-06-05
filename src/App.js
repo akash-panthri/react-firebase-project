@@ -7,6 +7,10 @@ import { getDocs, collection } from "firebase/firestore";
 
 function App() {
   const [movieList, setMovieList] = useState([]);
+  //states to create/submit new movie
+  const [newMovieTitle, setNewMovieTitle] = useState("");
+  const [newReleaseDate, setNewReleaseDate] = useState(0);
+  const [isNewMovieOscar, setIsNewMovieOscar] = useState(false);
   const moviesCollectionRed = collection(db, "movie");
 
   useEffect(() => {
@@ -29,16 +33,30 @@ function App() {
     <div className="App">
       <Auth />
       <div>
-        <input type="text" placeholder="Movie title..." />
-        <input type="number" placeholder="Release Date..." />
-        <input type="checkbox" />
+        <input
+          type="text"
+          placeholder="Movie title..."
+          onChange={(e) => setNewMovieTitle(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Release Date..."
+          onChange={(e) => setNewReleaseDate(Number(e.target.value))}
+        />
+        <input
+          type="checkbox"
+          checked={isNewMovieOscar}
+          onChange={(e) => setIsNewMovieOscar(e.target.checked)}
+        />
         <label> Received an Oscar</label>
         <button> Submit Movie</button>
       </div>
       {movieList.map((movie) => {
         return (
           <div>
-            <h1 style={{ color: movie.receivedOscar ? "green" : "red" }}>{movie.title}</h1>{" "}
+            <h1 style={{ color: movie.receivedOscar ? "green" : "red" }}>
+              {movie.title}
+            </h1>{" "}
             <p> Date: {movie.releaseYear} </p>
           </div>
         );
