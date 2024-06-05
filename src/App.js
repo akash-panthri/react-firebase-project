@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Auth from "./components/Auth.js";
 import { db } from "./config/firebase";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection,addDoc } from "firebase/firestore";
 
 function App() {
   const [movieList, setMovieList] = useState([]);
@@ -11,24 +11,38 @@ function App() {
   const [newMovieTitle, setNewMovieTitle] = useState("");
   const [newReleaseDate, setNewReleaseDate] = useState(0);
   const [isNewMovieOscar, setIsNewMovieOscar] = useState(false);
-  const moviesCollectionRed = collection(db, "movie");
+  const moviesCollectionRef = collection(db, "movie");
 
+
+  const getMovieList = async () => {
+    try {
+      const data = await getDocs(moviesCollectionRef);
+      const fileteredData = data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      console.log(fileteredData);
+      setMovieList(fileteredData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
-    const getMovieList = async () => {
-      try {
-        const data = await getDocs(moviesCollectionRed);
-        const fileteredData = data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        console.log(fileteredData);
-        setMovieList(fileteredData);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+   
     getMovieList();
   }, []);
+  const onSubmitMovie = async () => {
+    try {
+      await addDoc(moviesCollectionRef, {
+        title: newMovieTitle,
+        releaseYear: newReleaseDate,
+        receivedOscar: isNewMovieOscar,
+      });
+      getMovieList();
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <div className="App">
       <Auth />
@@ -49,7 +63,7 @@ function App() {
           onChange={(e) => setIsNewMovieOscar(e.target.checked)}
         />
         <label> Received an Oscar</label>
-        <button> Submit Movie</button>
+        <button onClick={onSubmitMovie}> Submit Movie</button>
       </div>
       {movieList.map((movie) => {
         return (
