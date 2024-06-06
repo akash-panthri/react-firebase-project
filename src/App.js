@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import Auth from "./components/Auth.js";
-import { db } from "./config/firebase";
+import { db, auth } from "./config/firebase";
 import { getDocs, doc,collection,addDoc, deleteDoc,updateDoc } from "firebase/firestore";
 
 function App() {
@@ -37,6 +37,7 @@ function App() {
         title: newMovieTitle,
         releaseYear: newReleaseDate,
         receivedOscar: isNewMovieOscar,
+        userId: auth?.currentUser?.uid,
       });
       getMovieList();
     } catch (err) {
